@@ -22,43 +22,48 @@ def ner(tokenlist):
 	return str_chunks
 
 
-def lister(tokenlist, filename):
+def lister(toksentlist, filename):
 
 	taglist = []
 
-	chunks = ner(tokenlist)
-
-	#print(chunks)
-
 	f = open("nltk-tags_for_" + filename + ".txt", "w+") 
 
-	for c in chunks:
+	for sent in toksentlist:
 
-		if(type(c) == nltk.tree.Tree):
+		chunks = ner(sent)
+
+#		print(chunks)
+
+		for c in chunks:
+
+			if(type(c) == nltk.tree.Tree):
 				
-				tag = re.findall('\((PER|MISC|ORG|LOC).*', str(c))
+					tag = re.findall('\((PER|MISC|ORG|LOC).*', str(c))[0]
 
-				for index, lv in enumerate(c.leaves()):
+					for index, lv in enumerate(c.leaves()):
 
-					if(index == 0):
+						if(index == 0):
 
-						#print(lv[0] + "\t:\t" + "B-" +  tag[0])
-						f.write(lv[0] + "\t:\t" + "B-" + tag[0] + "\n")
+#							print(lv[0] + "\t:\t" + "B-" +  tag[0])
+							f.write(lv[0] + "\t:\t" + "B-" + tag + "\n")
 
-						taglist.append("B-" + tag[0])
+							taglist.append("B-" + tag)
 
-					else:
+						else:
 					
-						#print(lv[0] + "\t:\t"  + "I-" + tag[0])
-						f.write(lv[0] + "\t:\t"  + "I-" + tag[0] + "\n")
+#							print(lv[0] + "\t:\t"  + "I-" + tag[0])
+							f.write(lv[0] + "\t:\t"  + "I-" + tag + "\n")
 
-						taglist.append("I-" + tag[0])
+							taglist.append("I-" + tag)
 
-		else:
-			#print(c[0])
-			f.write(str(c[0]) + "\t:\t0" + "\n")
+			else:
+#				print(c[0])
+				f.write(str(c[0]) + "\t:\tO" + "\n")
+	
+				taglist.append("O")
 
-			taglist.append(c[0])
+
+#		print("------------------------")
 
 
 	f.close()

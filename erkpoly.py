@@ -1,61 +1,91 @@
 #!/home/narkem/Anaconda3/bin/python
 
-from polyglot.text import Text
+#from polyglot.text import Text, Sentence
+
+#from difflib import SequenceMatcher
+
+import os
+import re
+from subprocess import call
 
 
-def ner(text, tokenlist, filename):
+def ner(text, filename):
 
-	f = open("poly-tags_for_" + filename + ".txt", "w+") 
+	ft = open("tmptext.txt", "w+")
+	ft.write(text)
+	ft.close()
 
+	f1 = open("poly-tags_for_" + filename + ".txt", "w+")
+	#polyglot --lang nl ner --input text.txt > poly.txt;
+	call(["polyglot", "--lang", "nl", "ner", "--input", "tmptext.txt"], stdout=f1)
+	f1.close()
 
-	text = Text(text)
+	os.remove("tmptext.txt")
 
-	print(text.entities)
+	polytl = []
 
-	#for entity in nertree:
-	
-	 #   print(entity.tag, entity)
+	tokenlist = []
 
+	f2 = open("poly-tags_for_" + filename + ".txt", "r+")
 
-	for sent in text.sentences:
+	lines = f2.readlines()
 
-		  #print(sent, "\n")
+	for line in lines[:-1]:
 
-		for entity in sent.entities:
+		tag = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
 
-				print(entity.tag, entity)
-				print(entity, text.words[entity.start: entity.end])
+		#print(tag[0] + "\t:\t" + tag[1])
+		
+		tokenlist.append(tag[0])	
 
-	f.close()
-
-	return 0
-
-
-
-#	i = 0
-#	for i in range(len(tokens)): # enumerate(tokens):
-#		if(i == len(tokens)-1):
-#			print(tokens[i])
-#			f.write(tokens[i] + "\n")			
-#			break
-#		elif(tokens[i - 1] == "-"):
-#			continue
-#		elif(tokens[i + 1] == "-"):
-#			if(tokens[i + 3] == "-"):
-#				print(tokens[i] + tokens[i + 1] + tokens[i + 2] + tokens[i + 3] + tokens[i + 4])
-#				f.write(tokens[i] + tokens[i + 1] + tokens[i + 2] + tokens[i + 3] + tokens[i + 4] + "\n")
-#			else:
-#				print(tokens[i] + tokens[i + 1] + tokens[i + 2])
-#				f.write(tokens[i] + tokens[i + 1] + tokens[i + 2] + "\n")
-#		elif(tokens[i] == "-"):
-#			continue
-#		else:
-#			print(tokens[i])
-#			f.write(tokens[i] + "\n")
+		polytl.append(tag[1])	
 
 
-if __name__ == "__main__":
+	f2.close()
 
-	str2 = 'Christiane heeft een lam.'
 
-	print(ner(str2, "ner"))
+	return polytl
+
+
+
+
+#def ner(strsentlist, toksentlist, filename):
+
+#	f = open("poly-tags_for_" + filename + ".txt", "w+") 
+
+#	print(strsentlist)
+
+#	texttotal = ' '.join(strsentlist)
+
+#	text = Text(texttotal)
+
+#	for sent in text.sentences:
+
+#		print("-------------------\n", sent)
+#		f.write("------------------\n")
+
+#		entitylist = sent.entities
+
+#		for entity in entitylist:			
+
+#			print(entity[0] + " : " + entity.tag)
+#			f.write(entity[0] + " : " + entity.tag + "\n")
+
+
+#	f.close()
+
+#	return 0
+
+
+#def similar(a, b):
+#   return SequenceMatcher(None, a, b).ratio()
+
+
+#if __name__ == "__main__":
+
+
+#	str2 = ['Christiane heeft een lam.']
+
+#	print(ner(str2, "ner"))
+
+

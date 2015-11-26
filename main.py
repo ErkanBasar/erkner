@@ -2,7 +2,6 @@
 
 
 import re
-import os
 import sys
 import erknltk
 import erkpoly
@@ -10,57 +9,99 @@ import erkpoly
 
 inputfile = sys.argv[1]
 
-print("File we are working on : " + inputfile) 
-
 f = open(inputfile, "r") 
 
 filename = re.findall('.*\/(.*)\.xml', inputfile)[0]
 
+print("File we are working on : " + filename) 
+
 f2 = open("frog-tags_for_" + filename + ".txt", "w+") 
 
+toksentlist = []
+
+strsentlist = []
+
 tokenlist = []
+
+alltokens = []
 
 frogtl = [] # tl => taglist
 
 
+firstline = True
+
 for line in f:
 	
 	dperl = line.split("\t")
+
+	if(firstline):
+		firstline = False
+		continue
+
 	
-	if(len(dperl) > 7):	
+	elif(len(dperl) > 2):	
 
 		#print(dperl[1] + "\t:\t" + dperl[9])
 		f2.write(dperl[1] + "\t:\t" + dperl[9] + "\n")
 		
 		tokenlist.append(dperl[1])	
 
+		alltokens.append(dperl[1])
 
 		frogtl.append(dperl[9])	
 
 
-text = ' '.join(tokenlist)
+	else:
 
-f20 = open("text.txt", "w+") 
+		toksentlist.append(tokenlist)
 
-f20.write(text)
+		sentence = ' '.join(tokenlist)
 
-f20.close()
+		strsentlist.append(sentence)
 
-#os.system("/home/narkem/workspaces/EntityRecog/erkfrog.py " + text)
+		tokenlist = []
 
-
-nltktl = erknltk.lister(tokenlist, filename)
-
-polytl = erkpoly.ner(text, tokenlist, filename)
+		continue
 
 
-totallist = zip(tokenlist, frogtl, nltktl)
+else: #belongs to for-loop, the end of the file
+
+	toksentlist.append(tokenlist)
+
+	sentence = ' '.join(tokenlist)
+
+	strsentlist.append(sentence)
 
 
-#for to, fro, nlt in totallist:
 
-	#print(to  + "\t:\t" + fro + "\t:\t" + nlt)
+texttotal = ' '.join(strsentlist)
 
+
+print("Frog data done.")
+
+
+nltktl = erknltk.lister(toksentlist, filename)
+
+print("NLTK done.")
+
+
+polytl = erkpoly.ner(texttotal, filename)
+
+print("Polyglot done.")
+
+
+totallist = zip(alltokens, frogtl, nltktl, polytl)
+
+
+f3 = open("results_for" + filename + ".txt", "w+")
+
+f3.write("Token , Frog Tag, NLTK Tag, Polyglot Tag\n")
+f3.write("========================================\n")
+
+for to, fro, nlt, pol in totallist:
+
+	print(to  + " , " + fro + ", " + nlt + ", " + pol)
+	f3.write(to  + " , " + fro + ", " + nlt + ", " + pol + "\n")
 	
 	
 
@@ -68,5 +109,5 @@ totallist = zip(tokenlist, frogtl, nltktl)
 
 f.close()
 f2.close()
-
+f3.close()
 
