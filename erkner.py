@@ -42,7 +42,7 @@ for line in f:
 	elif(len(dperl) > 2):	
 
 		#print(dperl[1] + "\t:\t" + dperl[9])
-		f2.write(dperl[1] + "\t:\t" + dperl[9] + "\n")
+		f2.write(dperl[1] + "," + dperl[9] + "\n")
 		
 		tokenlist.append(dperl[1])	
 
@@ -100,8 +100,8 @@ f3.write("========================================\n")
 
 for to, fro, nlt, pol in totallist:
 
-	print(to  + " , " + fro + ", " + nlt + ", " + pol)
-	f3.write(to  + " , " + fro + ", " + nlt + ", " + pol + "\n")
+	print(to  + "," + fro + "," + nlt + "," + pol)
+	f3.write(to  + "," + fro + "," + nlt + "," + pol + "\n")
 	
 	
 

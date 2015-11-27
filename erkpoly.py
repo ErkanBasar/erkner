@@ -15,7 +15,7 @@ def ner(text, filename):
 	ft.write(text)
 	ft.close()
 
-	f1 = open("poly-tags_for_" + filename + ".txt", "w+")
+	f1 = open("polytmp.txt", "w+")
 	#polyglot --lang nl ner --input text.txt > poly.txt;
 	call(["polyglot", "--lang", "nl", "ner", "--input", "tmptext.txt"], stdout=f1)
 	f1.close()
@@ -26,7 +26,8 @@ def ner(text, filename):
 
 	tokenlist = []
 
-	f2 = open("poly-tags_for_" + filename + ".txt", "r+")
+	f2 = open("polytmp.txt", "r+")
+	f3 = open("poly-tags_for_" + filename + ".txt", "w+")
 
 	lines = f2.readlines()
 
@@ -35,6 +36,8 @@ def ner(text, filename):
 		tag = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
 
 		#print(tag[0] + "\t:\t" + tag[1])
+
+		f3.write(tag[0] + "," + tag[1] + "\n")
 		
 		tokenlist.append(tag[0])	
 
@@ -42,6 +45,9 @@ def ner(text, filename):
 
 
 	f2.close()
+	os.remove("polytmp.txt")
+
+	f3.close()
 
 
 	return polytl
@@ -50,42 +56,21 @@ def ner(text, filename):
 
 
 #def ner(strsentlist, toksentlist, filename):
-
 #	f = open("poly-tags_for_" + filename + ".txt", "w+") 
-
 #	print(strsentlist)
-
 #	texttotal = ' '.join(strsentlist)
-
 #	text = Text(texttotal)
-
 #	for sent in text.sentences:
-
 #		print("-------------------\n", sent)
 #		f.write("------------------\n")
-
 #		entitylist = sent.entities
-
 #		for entity in entitylist:			
-
 #			print(entity[0] + " : " + entity.tag)
 #			f.write(entity[0] + " : " + entity.tag + "\n")
-
-
 #	f.close()
-
 #	return 0
-
-
 #def similar(a, b):
 #   return SequenceMatcher(None, a, b).ratio()
-
-
 #if __name__ == "__main__":
-
-
 #	str2 = ['Christiane heeft een lam.']
-
 #	print(ner(str2, "ner"))
-
-

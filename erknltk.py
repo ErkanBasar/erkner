@@ -45,20 +45,20 @@ def lister(toksentlist, filename):
 						if(index == 0):
 
 #							print(lv[0] + "\t:\t" + "B-" +  tag[0])
-							f.write(lv[0] + "\t:\t" + "B-" + tag + "\n")
+							f.write(lv[0] + "," + "B-" + tag + "\n")
 
 							taglist.append("B-" + tag)
 
 						else:
 					
 #							print(lv[0] + "\t:\t"  + "I-" + tag[0])
-							f.write(lv[0] + "\t:\t"  + "I-" + tag + "\n")
+							f.write(lv[0] + ","  + "I-" + tag + "\n")
 
 							taglist.append("I-" + tag)
 
 			else:
 #				print(c[0])
-				f.write(str(c[0]) + "\t:\tO" + "\n")
+				f.write(str(c[0]) + ",O" + "\n")
 	
 				taglist.append("O")
 
