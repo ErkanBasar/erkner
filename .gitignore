@@ -6,9 +6,7 @@ __pycache__/
 *.txt
 
 #Folders
-hedeler/
 data/
-nltk-trainingdata/
 nltk-trainer/
 
 *~
@@ -16,7 +14,6 @@ nltk-trainer/
 *.pickle
 *.pid
 *.json
-backups/
 
 #Ipython Notebook
 .ipynb_checkpoints

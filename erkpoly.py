@@ -9,25 +9,25 @@ import re
 from subprocess import call
 
 
-def ner(text, filename):
+def ner(text, filename, folder):
 
-	ft = open("tmptext.txt", "w+")
+	ft = open(".tmptext.txt", "w+")
 	ft.write(text)
 	ft.close()
 
-	f1 = open("polytmp.txt", "w+")
+	f1 = open(".polytmp.txt", "w+")
 	#polyglot --lang nl ner --input text.txt > poly.txt;
-	call(["polyglot", "--lang", "nl", "ner", "--input", "tmptext.txt"], stdout=f1)
+	call(["polyglot", "--lang", "nl", "ner", "--input", ".tmptext.txt"], stdout=f1)
 	f1.close()
 
-	os.remove("tmptext.txt")
+	os.remove(".tmptext.txt")
 
 	polytl = []
 
 	tokenlist = []
 
-	f2 = open("polytmp.txt", "r+")
-	f3 = open("poly-tags_for_" + filename + ".txt", "w+")
+	f2 = open(".polytmp.txt", "r+")
+	f3 = open(folder + "poly-tags_for_" + filename + ".txt", "w+")
 
 	lines = f2.readlines()
 
@@ -45,7 +45,7 @@ def ner(text, filename):
 
 
 	f2.close()
-	os.remove("polytmp.txt")
+	os.remove(".polytmp.txt")
 
 	f3.close()
 

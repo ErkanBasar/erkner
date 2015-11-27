@@ -9,10 +9,10 @@ sys.path.insert(1, r'nltk-trainer/')
 
 def ner(tokenlist):
 
-	with open("nltk-trainingdata/dutch-tagger.pickle", 'rb') as pickle_file: 
+	with open("data/nltk-training/dutch-tagger.pickle", 'rb') as pickle_file: 
 	    tagger = pickle.load(pickle_file)
 
-	with open("nltk-trainingdata/conll2002_ned_NaiveBayes.pickle", 'rb') as pickle_file:
+	with open("data/nltk-training/conll2002_ned_NaiveBayes.pickle", 'rb') as pickle_file:
 	    chunker = pickle.load(pickle_file)
 
 	str_tags = tagger.tag(tokenlist)
@@ -22,11 +22,11 @@ def ner(tokenlist):
 	return str_chunks
 
 
-def lister(toksentlist, filename):
+def lister(toksentlist, filename, folder):
 
 	taglist = []
 
-	f = open("nltk-tags_for_" + filename + ".txt", "w+") 
+	f = open(folder + "nltk-tags_for_" + filename + ".txt", "w+") 
 
 	for sent in toksentlist:
 

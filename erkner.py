@@ -1,6 +1,7 @@
 #!/home/narkem/Anaconda3/bin/python
 
 
+import os
 import re
 import sys
 import erknltk
@@ -13,9 +14,14 @@ f = open(inputfile, "r")
 
 filename = re.findall('.*\/(.*)\.xml', inputfile)[0]
 
+folder = "data/outputs/output_for_" + filename + "/"
+
+if not os.path.exists(folder):
+    os.makedirs(folder)
+
 print("File we are working on : " + filename) 
 
-f2 = open("frog-tags_for_" + filename + ".txt", "w+") 
+f2 = open(folder + "frog-tags_for_" + filename + ".txt", "w+") 
 
 toksentlist = []
 
@@ -80,12 +86,12 @@ texttotal = ' '.join(strsentlist)
 print("Frog data done.")
 
 
-nltktl = erknltk.lister(toksentlist, filename)
+nltktl = erknltk.lister(toksentlist, filename, folder)
 
 print("NLTK done.")
 
 
-polytl = erkpoly.ner(texttotal, filename)
+polytl = erkpoly.ner(texttotal, filename, folder)
 
 print("Polyglot done.")
 
@@ -93,7 +99,7 @@ print("Polyglot done.")
 totallist = zip(alltokens, frogtl, nltktl, polytl)
 
 
-f3 = open("results_for" + filename + ".txt", "w+")
+f3 = open(folder + "results_for" + filename + ".txt", "w+")
 
 f3.write("Token , Frog Tag, NLTK Tag, Polyglot Tag\n")
 f3.write("========================================\n")
