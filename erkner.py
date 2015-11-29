@@ -6,6 +6,7 @@ import re
 import sys
 import erknltk
 import erkpoly
+import erktest
 
 from difflib import SequenceMatcher
 
@@ -159,7 +160,6 @@ for tok, tra, fro, nlt, pol in totallist:
 	f3.write(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
 
 	ln += 1
-
 
 
 
