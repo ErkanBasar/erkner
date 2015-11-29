@@ -33,11 +33,16 @@ def ner(text, filename, folder):
 
 		tag = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
 
-		f3.write(tag[0] + "\t" + tag[1] + "\n")
+		if(not tag[1] == "O"):
+			tag1 = re.findall('I-(PER|ORG|LOC)', tag[1])[0]
+		else:
+			tag1 = tag[1]		
+
+		f3.write(tag[0] + "\t" + tag1 + "\n")
 		
 		tokenlist.append(tag[0])	
 
-		polytl.append(tag[1])	
+		polytl.append(tag1)	
 
 
 	f2.close()

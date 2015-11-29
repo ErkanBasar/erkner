@@ -13,7 +13,9 @@ def similar(a, b):
 
 
 
-def evaluation(systag1, systag2, filename, folder):
+def evaluation(systag1, systag2, filename, folder, inputfile):
+
+	f = open(inputfile, "r")
 
 	folder2 = folder + "comparison_results_for_" + filename + "/"
 
@@ -29,6 +31,9 @@ def evaluation(systag1, systag2, filename, folder):
 	miss = 0
 	wrom = 0
 	wroc = 0
+
+	precision = 0
+	recall = 0
 
 	print("\n############################\n# " + systag1.upper() + " & " + systag2.upper() + " EVALUATION\n############################")
 
@@ -89,9 +94,9 @@ def evaluation(systag1, systag2, filename, folder):
 			tag2 = erk
 
 
-		if(similar(tag1, tag2) >= 0.8 and not tag1 == "O"):
+		if(similar(tag1, tag2) >= 0.3 and not tag1 == "O"):
 			print(str(ln) + "\tCorM :\t" + tag1 + "\t" + tag2 + "\t " + token)
-			fout.write(str(ln) + "\tCorM :\t" + tag1 + "\t"+ tag2 + "\t " + token + "\n")
+			fout.write(str(ln) + "\tCorM :\t" + tag1 + "\t\t"+ tag2 + "\t " + token + "\n")
 			corm += 1
 
 		elif(tag1 == "O" and not tag2 == "O"):
@@ -101,27 +106,39 @@ def evaluation(systag1, systag2, filename, folder):
 
 		elif(not tag1 == "O" and tag2 == "O"):
 			print(str(ln) + "\tWroC :\t" + tag1 + "\t"+ tag2 + "\t " + token)
-			fout.write(str(ln) + "\tWroC :\t"+ tag1 + "\t"+ tag2 + "\t\t" + token + "\n")
+			fout.write(str(ln) + "\tWroC :\t"+ tag1 + "\t\t"+ tag2 + "\t\t" + token + "\n")
 			wroc += 1
 
-		elif(similar(tag1, tag2) < 0.8 and not tag1 == "O" and not tag2 == "O"):
+		elif(similar(tag1, tag2) < 0.3 and not tag1 == "O" and not tag2 == "O"):
 			print(str(ln) + "\tWroM :\t" + tag1 + "\t" + tag2 + "\t " + token)
-			fout.write(str(ln) + "\tWroM :\t" + tag1 + "\t" + tag2 + "\t " + token  + "\n")
+			fout.write(str(ln) + "\tWroM :\t" + tag1 + "\t\t" + tag2 + "\t " + token  + "\n")
 			wrom += 1
 
 		ln += 1
 
-	print("\n###########################\n#  Results\n###########################\n")
-	print("Correct Match (CorM) = " + str(corm))
-	print("Wrong Match (WroM) = " + str(wrom))
-	print("Missed (Miss) = " + str(miss))
-	print("Wrong Call (WroC) = " + str(wroc))
 
-	fout.write("\n###########################\n#  Results\n###########################\n")
-	fout.write("Correct Match (CorM) = " + str(corm) + "\n")
-	fout.write("Wrong Match (WroM) = " + str(wrom) + "\n")
-	fout.write("Missed (Miss) = " + str(miss) + "\n")
-	fout.write("Wrong Call (WroC) = " + str(wroc) + "\n")
+	precision = format(corm/(corm+wrom+wroc), '.2f')
+
+	recall = format(corm/(miss+wrom+corm), '.2f')
+
+	print("\n\n# "		
+			+ "Results\n============================\n"
+			+ "Correct Match (CorM) = " + str(corm) + "\n"
+			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
+			+ "Missed (Miss) = " + str(miss) + "\n"
+			+ "Wrong Call (WroC) = " + str(wroc) + "\n"
+			+ "Precision = " + str(precision) + "\n"
+			+ "Recall = " + str(recall))
+
+	fout.write("\n\n# "  
+			+ "Results\n============================\n"
+			+ "Correct Match (CorM) = " + str(corm) + "\n"
+			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
+			+ "Missed (Miss) = " + str(miss) + "\n"
+			+ "Wrong Call (WroC) = " + str(wroc) + "\n"
+			+ "Precision = " + str(precision) + "\n"
+			+ "Recall = " + str(recall))
+	
 
 
 
@@ -135,22 +152,25 @@ if __name__ == "__main__":
 
 	inputfile = sys.argv[1]
 
-	f = open(inputfile, "r") 
-
 	filename = re.findall('.*\/results_for_(.*)\.txt', inputfile)[0]
 
-	folder = "data/outputs/output_for_" + filename + "/comparison_results_for_" + filename + "/"
+	folder = "data/outputs/output_for_" + filename + "/"
 
 	if not os.path.exists(folder):
 		os.makedirs(folder)
 
 	print("File we are working on : " + filename) 
 
-	systag1 = input('Tag1 (tra, fro, nlt, pol, erk) : ') or "erk"
-	systag2 = input('Tag2 (tra, fro, nlt, pol, erk) : ') or "tra"
+	#systag1 = input('Tag1 (tra, fro, nlt, pol, erk) : ') or "erk"
+	#systag2 = input('Tag2 (tra, fro, nlt, pol, erk) : ') or "tra"
 
 
-	evaluation(systag1, systag2, filename, folder)
+	#evaluation(systag1, systag2, filename, folder, inputfile)
+
+	evaluation("fro", "tra", filename, folder, inputfile)
+	evaluation("nlt", "tra", filename, folder, inputfile)
+	evaluation("pol", "tra", filename, folder, inputfile)
+	evaluation("erk", "tra", filename, folder, inputfile)
 
 
 

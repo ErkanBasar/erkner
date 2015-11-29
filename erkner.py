@@ -30,7 +30,7 @@ print("File we are working on : " + filename)
 
 frg = open(folder + "frog-tags_for_" + filename + ".txt", "w+") 
 
-fm = open(folder + "training-tags_for_" + filename + ".txt", "w+")
+ftra = open(folder + "training-tags_for_" + filename + ".txt", "w+")
 
 toksentlist = [] # tokenized sentences list
 
@@ -61,7 +61,11 @@ for line in f:
 
 		if(len(dperl) == 12):
 
-			tag = dperl[9]
+			if(not dperl[9] == "O"):
+				tag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[9])[0]
+			else:
+				tag = dperl[9]
+
 
 			ttag = dperl[2]
 
@@ -70,7 +74,10 @@ for line in f:
 
 		elif(len(dperl) == 10):
 
-			tag = dperl[7]
+			if(not dperl[7] == "O"):
+				tag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[7])[0]
+			else:
+				tag = dperl[7]
 
 			ttag = "O"
 
@@ -80,7 +87,7 @@ for line in f:
 
 		trainingtl.append(ttag)
 
-		fm.write(token + "," + ttag + "\n")
+		ftra.write(token + "," + ttag + "\n")
 
 		frg.write(token + "," + tag + "\n")
 		
@@ -130,13 +137,15 @@ polytl = erkpoly.ner(texttotal, filename, folder)
 print("Polyglot done.")
 
 
+result_file = folder + "results_for_" + filename + ".txt"
 
-f3 = open(folder + "results_for_" + filename + ".txt", "w+")
+f3 = open(result_file, "w+")
 
 
 totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
 
 f3.write("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag\n")
+print("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag")
 
 erk = ""
 
@@ -147,13 +156,16 @@ for tok, tra, fro, nlt, pol in totallist:
 	if(nlt == fro and nlt == pol and fro == pol):
 		erk = nlt
 
-	elif(similar(fro,nlt) >= 0.8 or similar(fro,pol) >= 0.8):
+	elif(fro == pol and not fro == nlt):
 		erk = fro
 
-	elif(similar(nlt,pol) >= 0.8):
+	elif(nlt == pol and not nlt == fro):
+		erk = nlt 
+
+	elif(nlt == fro and not nlt == pol):
 		erk = nlt
 
-	else:
+	else: #If they are all different, trust nltk
 		erk=nlt
 
 	print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
@@ -163,12 +175,17 @@ for tok, tra, fro, nlt, pol in totallist:
 
 
 
+#erktest.evaluation("fro", "tra", filename, folder, result_file)
+#erktest.evaluation("nlt", "tra", filename, folder, result_file)
+#erktest.evaluation("pol", "tra", filename, folder, result_file)
+#erktest.evaluation("erk", "tra", filename, folder, result_file)
+
 
 
 
 f.close()
 frg.close()
-fm.close()
+ftra.close()
 f3.close()
 
 
