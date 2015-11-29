@@ -1,8 +1,5 @@
 #!/home/narkem/Anaconda3/bin/python
 
-#from polyglot.text import Text, Sentence
-
-#from difflib import SequenceMatcher
 
 import os
 import re
@@ -21,6 +18,7 @@ def ner(text, filename, folder):
 	f1.close()
 
 	os.remove(".tmptext.txt")
+	f1.close()
 
 	polytl = []
 
@@ -35,9 +33,7 @@ def ner(text, filename, folder):
 
 		tag = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
 
-		#print(tag[0] + "\t:\t" + tag[1])
-
-		f3.write(tag[0] + "," + tag[1] + "\n")
+		f3.write(tag[0] + "\t" + tag[1] + "\n")
 		
 		tokenlist.append(tag[0])	
 
@@ -54,7 +50,8 @@ def ner(text, filename, folder):
 
 
 
-
+#from polyglot.text import Text, Sentence
+#from difflib import SequenceMatcher
 #def ner(strsentlist, toksentlist, filename):
 #	f = open("poly-tags_for_" + filename + ".txt", "w+") 
 #	print(strsentlist)

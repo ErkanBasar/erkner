@@ -7,6 +7,12 @@ import sys
 import erknltk
 import erkpoly
 
+from difflib import SequenceMatcher
+
+
+def similar(a, b):
+   return SequenceMatcher(None, a, b).ratio()
+
 
 inputfile = sys.argv[1]
 
@@ -25,19 +31,17 @@ frg = open(folder + "frog-tags_for_" + filename + ".txt", "w+")
 
 fm = open(folder + "training-tags_for_" + filename + ".txt", "w+")
 
-toksentlist = []
+toksentlist = [] # tokenized sentences list
 
-strsentlist = []
+strsentlist = [] # string sentences list
 
-tokenlist = []
+tokenlist = [] # tokenlist (sentence tokens)
 
 alltokens = []
 
 frogtl = [] # tl => taglist
 
 trainingtl = []
-
-training = False
 
 firstline = True
 
@@ -56,8 +60,6 @@ for line in f:
 
 		if(len(dperl) == 12):
 
-			training = True			
-
 			tag = dperl[9]
 
 			ttag = dperl[2]
@@ -65,20 +67,19 @@ for line in f:
 			if(ttag == "_"):
 				ttag = "O"
 
-			trainingtl.append(ttag)
-
-			#print(token + "," + ttag + "\n")
-			fm.write(token + "," + ttag + "\n")
-
 		elif(len(dperl) == 10):
 
 			tag = dperl[7]
 
-			fm.write("There was no training tag.\n")
+			ttag = "O"
 
 		else:
 			print("Input file format is not compatible")
 
+
+		trainingtl.append(ttag)
+
+		fm.write(token + "," + ttag + "\n")
 
 		frg.write(token + "," + tag + "\n")
 		
@@ -128,33 +129,40 @@ polytl = erkpoly.ner(texttotal, filename, folder)
 print("Polyglot done.")
 
 
-f3 = open(folder + "results_for" + filename + ".txt", "w+")
+
+f3 = open(folder + "results_for_" + filename + ".txt", "w+")
+
+
+totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
+
+f3.write("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag\n")
+
+erk = ""
+
+ln = 0 # line number
+
+for tok, tra, fro, nlt, pol in totallist:
+
+	if(nlt == fro and nlt == pol and fro == pol):
+		erk = nlt
+
+	elif(similar(fro,nlt) >= 0.8 or similar(fro,pol) >= 0.8):
+		erk = fro
+
+	elif(similar(nlt,pol) >= 0.8):
+		erk = nlt
+
+	else:
+		erk=nlt
+
+	print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
+	f3.write(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
+
+	ln += 1
 
 
 
-if(training == False):
 
-	totallist = zip(alltokens, frogtl, nltktl, polytl)
-
-	f3.write("Token , Frog Tag, NLTK Tag, Polyglot Tag\n")
-	f3.write("========================================\n")
-
-	for to, fro, nlt, pol in totallist:
-
-		print(to  + "," + fro + "," + nlt + "," + pol)
-		f3.write(to  + "," + fro + "," + nlt + "," + pol + "\n")
-
-elif(training == True):
-	
-	totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
-
-	f3.write("Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag\n")
-	f3.write("========================================\n")
-
-	for to, tra, fro, nlt, pol in totallist:
-
-		print(to + "," + tra + "," + fro + "," + nlt + "," + pol)
-		f3.write(to + "," + tra + "," + fro + "," + nlt + "," + pol + "\n")
 
 
 
@@ -162,4 +170,5 @@ f.close()
 frg.close()
 fm.close()
 f3.close()
+
 
