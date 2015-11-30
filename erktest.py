@@ -17,13 +17,12 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 
 	f = open(inputfile, "r")
 
-	folder2 = folder + "comparison_results_for_" + filename + "/"
+	folder2 = folder + "evaluations_for_" + filename + "/"
 
 	if not os.path.exists(folder2):
 		os.makedirs(folder2)
 
 	fout = open(folder2 + systag1 + "_" + systag2  + "_" + filename + ".txt", "w+") 
-
 
 	ln = 0 #line number
 
@@ -122,7 +121,7 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 	recall = format(corm/(miss+wrom+corm), '.2f')
 
 	print("\n\n# "		
-			+ "Results " + systag1 + " & " + systag2 
+			+ "Evaluation for " + systag1 + " & " + systag2 
 			+ "\n============================\n"
 			+ "Correct Match (CorM) = " + str(corm) + "\n"
 			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
@@ -132,7 +131,7 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 			+ "Recall = " + str(recall))
 
 	fout.write("\n\n# "  
-			+ "Results " + systag1 + " & " + systag2 
+			+ "Evaluation for " + systag1 + " & " + systag2 
 			+ "\n============================\n"
 			+ "Correct Match (CorM) = " + str(corm) + "\n"
 			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
@@ -142,11 +141,27 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 			+ "Recall = " + str(recall))
 	
 
+	return corm, wrom, miss, wroc, precision, recall
 
 
 	f.close()
 	fout.close()
 
+
+
+def writte(systag1, corm, wrom, miss, wroc, precision, recall):
+
+	fevas = open(folder2 + "evaluations_for_" + filename + ".txt", "a")
+
+	fevas.write("\n\n# "  
+			+ "Evaluation for " + systag1 
+			+ "\n============================\n"
+			+ "Correct Match = " + str(corm) + "\n"
+			+ "Wrong Match = " + str(wrom) + "\n"
+			+ "Missed = " + str(miss) + "\n"
+			+ "Wrong Call = " + str(wroc) + "\n"
+			+ "Precision = " + str(precision) + "\n"
+			+ "Recall = " + str(recall))
 
 
 
@@ -158,18 +173,30 @@ if __name__ == "__main__":
 
 	folder = "data/outputs/output_for_" + filename + "/"
 
-	if not os.path.exists(folder):
-		os.makedirs(folder)
+	folder2 = folder + "evaluations_for_" + filename + "/"
+
+	if not os.path.exists(folder2):
+		os.makedirs(folder2)
 
 	print("File we are working on : " + filename) 
 
 
 	if(len(sys.argv) > 2 and sys.argv[2] == "--all"):
 
-		evaluation("fro", "tra", filename, folder, inputfile)
-		evaluation("nlt", "tra", filename, folder, inputfile)
-		evaluation("pol", "tra", filename, folder, inputfile)
-		evaluation("erk", "tra", filename, folder, inputfile)
+		fevas = open(folder2 + "evaluations_for_" + filename + ".txt", "w+")
+
+		fc, fw, fm, fwc, fp, fr = evaluation("fro", "tra", filename, folder, inputfile)
+		nc, nw, nm, nwc, np, nr = evaluation("nlt", "tra", filename, folder, inputfile)
+		pc, pw, pm, pwc, pp, pr = evaluation("pol", "tra", filename, folder, inputfile)
+		ec, ew, em, ewc, ep, er = evaluation("erk", "tra", filename, folder, inputfile)
+
+		writte("Frog", fc, fw, fm, fwc, fp, fr)
+		writte("NLTK", nc, nw, nm, nwc, np, nr)
+		writte("Polyglot", pc, pw, pm, pwc, pp, pr)
+		writte("ERK", ec, ew, em, ewc, ep, er)
+		
+		fevas.close()
+
 
 	else:
 
@@ -177,9 +204,6 @@ if __name__ == "__main__":
 		systag2 = input('Tag2 (tra, fro, nlt, pol, erk) : ') or "tra"
 
 		evaluation(systag1, systag2, filename, folder, inputfile)
-
-
-
 
 
 

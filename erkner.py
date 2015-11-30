@@ -8,6 +8,8 @@ import erknltk
 import erkpoly
 import erktest
 
+from subprocess import call
+
 from difflib import SequenceMatcher
 
 
@@ -137,9 +139,15 @@ polytl = erkpoly.ner(texttotal, filename, folder)
 print("Polyglot done.")
 
 
-result_file = folder + "results_for_" + filename + ".txt"
+f3 = open(folder + "results_for_" + filename + ".txt", "w+")
 
-f3 = open(result_file, "w+")
+ferk = open(folder + "erk-tags_for_" + filename + ".txt", "w+")
+
+
+if not os.path.exists("data/responses/"):
+    os.makedirs("data/responses/")
+
+ferkclin = open("data/responses/" + filename + ".xml.e", "w+")
 
 
 totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
@@ -168,24 +176,32 @@ for tok, tra, fro, nlt, pol in totallist:
 	else: #If they are all different, trust nltk
 		erk=nlt
 
+
+	ferk.write(tok + "\t" + erk + "\n")
+
+	if(erk == "O" or erk == "MISC"):
+		ferkclin.write(str(ln) + "\t" + tok + "\t" + "_" + "\t_" + "\n")
+	else:
+		ferkclin.write(str(ln) + "\t" + tok + "\t(" + erk + ")\t_" + "\n")
+
 	print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
 	f3.write(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
 
 	ln += 1
 
 
-
-#erktest.evaluation("fro", "tra", filename, folder, result_file)
-#erktest.evaluation("nlt", "tra", filename, folder, result_file)
-#erktest.evaluation("pol", "tra", filename, folder, result_file)
-#erktest.evaluation("erk", "tra", filename, folder, result_file)
-
-
-
-
 f.close()
 frg.close()
 ftra.close()
 f3.close()
+ferk.close()
+
+
+inputfile = folder + "results_for_" + filename + ".txt"
+
+call(["python", "erktest.py", inputfile, "--all"])
+
+
+
 
 
