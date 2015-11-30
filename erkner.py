@@ -153,7 +153,7 @@ ferkclin = open("data/responses/" + filename + ".xml.e", "w+")
 totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
 
 f3.write("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag\n")
-print("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag")
+#print("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag")
 
 erk = ""
 
@@ -184,7 +184,7 @@ for tok, tra, fro, nlt, pol in totallist:
 	else:
 		ferkclin.write(str(ln) + "\t" + tok + "\t(" + erk + ")\t_" + "\n")
 
-	print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
+	#print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
 	f3.write(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
 
 	ln += 1
@@ -197,9 +197,12 @@ f3.close()
 ferk.close()
 
 
+print("ERK done.")
+
+
 inputfile = folder + "results_for_" + filename + ".txt"
 
-call(["python", "erktest.py", inputfile, "--all"])
+call(["./erktest.py", inputfile, "--all"])
 
 
 

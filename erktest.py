@@ -34,10 +34,10 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 	precision = 0
 	recall = 0
 
-	print("\n############################\n# " + systag1.upper() + " & " + systag2.upper() + " EVALUATION\n############################")
+	#print("\n############################\n# " + systag1.upper() + " & " + systag2.upper() + " EVALUATION\n############################")
 
-	print("\nLN\tStatus\t" + systag1.upper() + "\t" + systag2.upper() + "\tToken"  
-	  + "\n==========================================")
+	#print("\nLN\tStatus\t" + systag1.upper() + "\t" + systag2.upper() + "\tToken"  
+	#  + "\n==========================================")
 
 	fout.write("LN\tStatus\t" + systag1.upper() + "\t\t" + systag2.upper() + "\t\tToken"  
 	  + "\n==========================================\n")
@@ -94,22 +94,22 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 
 
 		if(similar(tag1, tag2) >= 0.3 and not tag1 == "O"):
-			print(str(ln) + "\tCorM :\t" + tag1 + "\t" + tag2 + "\t " + token)
+			#print(str(ln) + "\tCorM :\t" + tag1 + "\t" + tag2 + "\t " + token)
 			fout.write(str(ln) + "\tCorM :\t" + tag1 + "\t\t"+ tag2 + "\t " + token + "\n")
 			corm += 1
 
 		elif(tag1 == "O" and not tag2 == "O"):
-			print(str(ln) + "\tMiss :\t" + tag1 + "\t" + tag2 + "\t " + token)
+			#print(str(ln) + "\tMiss :\t" + tag1 + "\t" + tag2 + "\t " + token)
 			fout.write(str(ln) + "\tMiss :\t" + tag1 + "\t\t" + tag2 + "\t " + token + "\n")
 			miss += 1
 
 		elif(not tag1 == "O" and tag2 == "O"):
-			print(str(ln) + "\tWroC :\t" + tag1 + "\t"+ tag2 + "\t " + token)
+			#print(str(ln) + "\tWroC :\t" + tag1 + "\t"+ tag2 + "\t " + token)
 			fout.write(str(ln) + "\tWroC :\t"+ tag1 + "\t\t"+ tag2 + "\t\t" + token + "\n")
 			wroc += 1
 
 		elif(similar(tag1, tag2) < 0.3 and not tag1 == "O" and not tag2 == "O"):
-			print(str(ln) + "\tWroM :\t" + tag1 + "\t" + tag2 + "\t " + token)
+			#print(str(ln) + "\tWroM :\t" + tag1 + "\t" + tag2 + "\t " + token)
 			fout.write(str(ln) + "\tWroM :\t" + tag1 + "\t\t" + tag2 + "\t " + token  + "\n")
 			wrom += 1
 
@@ -120,15 +120,15 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 
 	recall = format(corm/(miss+wrom+corm), '.2f')
 
-	print("\n\n# "		
-			+ "Evaluation for " + systag1 + " & " + systag2 
-			+ "\n============================\n"
-			+ "Correct Match (CorM) = " + str(corm) + "\n"
-			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
-			+ "Missed (Miss) = " + str(miss) + "\n"
-			+ "Wrong Call (WroC) = " + str(wroc) + "\n"
-			+ "Precision = " + str(precision) + "\n"
-			+ "Recall = " + str(recall))
+#	print("\n\n# "		
+#			+ "Evaluation for " + systag1 + " & " + systag2 
+#			+ "\n============================\n"
+#			+ "Correct Match (CorM) = " + str(corm) + "\n"
+#			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
+#			+ "Missed (Miss) = " + str(miss) + "\n"
+#			+ "Wrong Call (WroC) = " + str(wroc) + "\n"
+#			+ "Precision = " + str(precision) + "\n"
+#			+ "Recall = " + str(recall))
 
 	fout.write("\n\n# "  
 			+ "Evaluation for " + systag1 + " & " + systag2 
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 	if not os.path.exists(folder2):
 		os.makedirs(folder2)
 
-	print("File we are working on : " + filename) 
+	#print("File we are working on : " + filename) 
 
 
 	if(len(sys.argv) > 2 and sys.argv[2] == "--all"):
