@@ -11,4 +11,8 @@ for f in "data/inputs"/*; do
 
 done
 
-find data/outputs/ -name 'evaluations_for_*.txt' -exec cp  {} data/erkevaluations \;
+echo "ERK Name Entity Recognition done"
+
+find data/outputs/ -name 'evaluations_for_*.txt' -exec cp  {} data/erk_evaluations \;
+
+echo "All evaluation files are copied"
