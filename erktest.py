@@ -33,6 +33,7 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 
 	precision = 0
 	recall = 0
+	fmeasure= 0
 
 	#print("\n############################\n# " + systag1.upper() + " & " + systag2.upper() + " EVALUATION\n############################")
 
@@ -116,9 +117,13 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 		ln += 1
 
 
-	precision = format(corm/(corm+wrom+wroc), '.2f')
+	prec = corm/(corm+wrom+wroc)
+	precision = format(prec, '.2f')
 
-	recall = format(corm/(miss+wrom+corm), '.2f')
+	rec = corm/(miss+wrom+corm)
+	recall = format(rec, '.2f')
+
+	fmeasure = format((2*prec*rec)/(prec+rec), '.2f')
 
 #	print("\n\n# "		
 #			+ "Evaluation for " + systag1 + " & " + systag2 
@@ -138,10 +143,11 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 			+ "Missed (Miss) = " + str(miss) + "\n"
 			+ "Wrong Call (WroC) = " + str(wroc) + "\n"
 			+ "Precision = " + str(precision) + "\n"
-			+ "Recall = " + str(recall))
+			+ "Recall = " + str(recall) + "\n"
+			+ "F-measure = " + str(fmeasure))
 	
 
-	return corm, wrom, miss, wroc, precision, recall
+	return corm, wrom, miss, wroc, precision, recall, fmeasure
 
 
 	f.close()
@@ -149,7 +155,7 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 
 
 
-def writte(systag1, corm, wrom, miss, wroc, precision, recall):
+def writte(systag1, corm, wrom, miss, wroc, precision, recall, fmeasure):
 
 	fevas = open(folder2 + "evaluations_for_" + filename + ".txt", "a")
 
@@ -161,7 +167,8 @@ def writte(systag1, corm, wrom, miss, wroc, precision, recall):
 			+ "Missed = " + str(miss) + "\n"
 			+ "Wrong Call = " + str(wroc) + "\n"
 			+ "Precision = " + str(precision) + "\n"
-			+ "Recall = " + str(recall))
+			+ "Recall = " + str(recall) + "\n"
+			+ "F-measure = " + str(fmeasure))
 
 
 
@@ -185,15 +192,15 @@ if __name__ == "__main__":
 
 		fevas = open(folder2 + "evaluations_for_" + filename + ".txt", "w+")
 
-		fc, fw, fm, fwc, fp, fr = evaluation("fro", "tra", filename, folder, inputfile)
-		nc, nw, nm, nwc, np, nr = evaluation("nlt", "tra", filename, folder, inputfile)
-		pc, pw, pm, pwc, pp, pr = evaluation("pol", "tra", filename, folder, inputfile)
-		ec, ew, em, ewc, ep, er = evaluation("erk", "tra", filename, folder, inputfile)
+		fc, fw, fm, fwc, fp, fr, ffm = evaluation("fro", "tra", filename, folder, inputfile)
+		nc, nw, nm, nwc, np, nr, nfm = evaluation("nlt", "tra", filename, folder, inputfile)
+		pc, pw, pm, pwc, pp, pr, pfm = evaluation("pol", "tra", filename, folder, inputfile)
+		ec, ew, em, ewc, ep, er, efm = evaluation("erk", "tra", filename, folder, inputfile)
 
-		writte("Frog", fc, fw, fm, fwc, fp, fr)
-		writte("NLTK", nc, nw, nm, nwc, np, nr)
-		writte("Polyglot", pc, pw, pm, pwc, pp, pr)
-		writte("ERK", ec, ew, em, ewc, ep, er)
+		writte("Frog", fc, fw, fm, fwc, fp, fr, ffm)
+		writte("NLTK", nc, nw, nm, nwc, np, nr, nfm)
+		writte("Polyglot", pc, pw, pm, pwc, pp, pr, pfm)
+		writte("ERK", ec, ew, em, ewc, ep, er, efm)
 		
 		fevas.close()
 
