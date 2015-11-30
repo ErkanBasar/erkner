@@ -32,8 +32,6 @@ def lister(toksentlist, filename, folder):
 
 		chunks = ner(sent)
 
-#		print(chunks)
-
 		for c in chunks:
 
 			if(type(c) == nltk.tree.Tree):
@@ -45,25 +43,22 @@ def lister(toksentlist, filename, folder):
 						if(index == 0):
 
 #							print(lv[0] + "\t:\t" + "B-" +  tag[0])
-							f.write(lv[0] + "\t" + "B-" + tag + "\n")
+							f.write(lv[0] + "\t" + tag + "\n")
 
 							taglist.append(tag)
 
 						else:
 					
 #							print(lv[0] + "\t:\t"  + "I-" + tag[0])
-							f.write(lv[0] + "\t"  + "I-" + tag + "\n")
+							f.write(lv[0] + "\t"  + tag + "\n")
 
 							taglist.append(tag)
 
 			else:
 #				print(c[0])
-				f.write(str(c[0]) + ",O" + "\n")
+				f.write(str(c[0]) + "\tO" + "\n")
 	
 				taglist.append("O")
-
-
-#		print("------------------------")
 
 
 	f.close()

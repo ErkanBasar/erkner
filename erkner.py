@@ -62,12 +62,12 @@ for line in f:
 		if(len(dperl) == 12):
 
 			if(not dperl[9] == "O"):
-				tag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[9])[0]
+				ftag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[9])[0]
 			else:
-				tag = dperl[9]
+				ftag = dperl[9] # frog tag
 
 
-			ttag = dperl[2]
+			ttag = dperl[2] # training tag
 
 			if(ttag == "_"):
 				ttag = "O"
@@ -75,9 +75,9 @@ for line in f:
 		elif(len(dperl) == 10):
 
 			if(not dperl[7] == "O"):
-				tag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[7])[0]
+				ftag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[7])[0]
 			else:
-				tag = dperl[7]
+				ftag = dperl[7]
 
 			ttag = "O"
 
@@ -87,15 +87,15 @@ for line in f:
 
 		trainingtl.append(ttag)
 
-		ftra.write(token + "," + ttag + "\n")
+		ftra.write(token + "\t" + ttag + "\n")
 
-		frg.write(token + "," + tag + "\n")
+		frg.write(token + "\t" + ftag + "\n")
 		
 		tokenlist.append(token)	
 
 		alltokens.append(token)
 
-		frogtl.append(tag)	
+		frogtl.append(ftag)	
 
 
 	else:

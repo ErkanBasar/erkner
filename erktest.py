@@ -122,7 +122,8 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 	recall = format(corm/(miss+wrom+corm), '.2f')
 
 	print("\n\n# "		
-			+ "Results\n============================\n"
+			+ "Results " + systag1 + " & " + systag2 
+			+ "\n============================\n"
 			+ "Correct Match (CorM) = " + str(corm) + "\n"
 			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
 			+ "Missed (Miss) = " + str(miss) + "\n"
@@ -131,7 +132,8 @@ def evaluation(systag1, systag2, filename, folder, inputfile):
 			+ "Recall = " + str(recall))
 
 	fout.write("\n\n# "  
-			+ "Results\n============================\n"
+			+ "Results " + systag1 + " & " + systag2 
+			+ "\n============================\n"
 			+ "Correct Match (CorM) = " + str(corm) + "\n"
 			+ "Wrong Match (WroM) = " + str(wrom) + "\n"
 			+ "Missed (Miss) = " + str(miss) + "\n"
@@ -161,16 +163,22 @@ if __name__ == "__main__":
 
 	print("File we are working on : " + filename) 
 
-	#systag1 = input('Tag1 (tra, fro, nlt, pol, erk) : ') or "erk"
-	#systag2 = input('Tag2 (tra, fro, nlt, pol, erk) : ') or "tra"
+
+	if(len(sys.argv) > 2 and sys.argv[2] == "--all"):
+
+		evaluation("fro", "tra", filename, folder, inputfile)
+		evaluation("nlt", "tra", filename, folder, inputfile)
+		evaluation("pol", "tra", filename, folder, inputfile)
+		evaluation("erk", "tra", filename, folder, inputfile)
+
+	else:
+
+		systag1 = input('Tag1 (tra, fro, nlt, pol, erk) : ') or "erk"
+		systag2 = input('Tag2 (tra, fro, nlt, pol, erk) : ') or "tra"
+
+		evaluation(systag1, systag2, filename, folder, inputfile)
 
 
-	#evaluation(systag1, systag2, filename, folder, inputfile)
-
-	evaluation("fro", "tra", filename, folder, inputfile)
-	evaluation("nlt", "tra", filename, folder, inputfile)
-	evaluation("pol", "tra", filename, folder, inputfile)
-	evaluation("erk", "tra", filename, folder, inputfile)
 
 
 
