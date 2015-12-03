@@ -1,10 +1,11 @@
 #!/bin/bash
 
+for f in $1*; do
 
-for f in "data/inputs"/*; do
-
-	if [[ $f =~ data/inputs/[0-9].* ]]; then
-	    ./erkner.py $f
+	if [[ $f =~ $1[0-9].* ]]; then
+	    ./erkner.py $f $2
+		#write "./runall.sh "folder/path" --eval" to trigger evaluation in erkner 
+		:
 	else
 	    :
 	fi

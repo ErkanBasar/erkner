@@ -16,14 +16,20 @@ from difflib import SequenceMatcher
 def similar(a, b):
    return SequenceMatcher(None, a, b).ratio()
 
-
 inputfile = sys.argv[1]
+
+evaluation = False
+if(len(sys.argv) > 2):
+	if(sys.argv[2] == "--eval"):
+		evaluation = True
 
 f = open(inputfile, "r") 
 
-filename = re.findall('.*\/(.*)\.xml', inputfile)[0]
+regex = re.findall('.*\/(.*)\/(.*)\.xml', inputfile)[0]
+upfolder = regex[0]
+filename = os.path.splitext(regex[1])[0]
 
-folder = "data/outputs/output_for_" + filename + "/"
+folder = folder = "data/outputs/" + upfolder +  "/output_for_" + filename + "/"
 
 if not os.path.exists(folder):
     os.makedirs(folder)
@@ -67,7 +73,6 @@ for line in f:
 				ftag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[9])[0]
 			else:
 				ftag = dperl[9] # frog tag
-
 
 			ttag = dperl[2] # training tag
 
@@ -144,10 +149,12 @@ f3 = open(folder + "results_for_" + filename + ".txt", "w+")
 ferk = open(folder + "erk-tags_for_" + filename + ".txt", "w+")
 
 
-if not os.path.exists("data/responses/"):
-    os.makedirs("data/responses/")
+resp_folder = "data/outputs/responses/" + upfolder
 
-ferkclin = open("data/responses/" + filename + ".xml.e", "w+")
+if not os.path.exists(resp_folder):
+    os.makedirs(resp_folder)
+
+ferkclin = open(resp_folder + "/" + filename + ".xml.e", "w+")
 
 
 totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
@@ -200,10 +207,15 @@ ferk.close()
 print("ERK done.")
 
 
-inputfile = folder + "results_for_" + filename + ".txt"
+if(evaluation == True):
 
-call(["./erktest.py", inputfile, "--all"])
+	inputfile = folder + "results_for_" + filename + ".txt"
 
+	call(["./erktest.py", inputfile, "--all"])
+	print("Evaluation done.")
+
+else:
+	print("Evaluation didn't take place.")
 
 
 

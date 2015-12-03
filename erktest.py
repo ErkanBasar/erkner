@@ -176,9 +176,11 @@ if __name__ == "__main__":
 
 	inputfile = sys.argv[1]
 
-	filename = re.findall('.*\/results_for_(.*)\.txt', inputfile)[0]
+	regex = re.findall('(.*)\/results_for_(.*)\.', inputfile)[0]
 
-	folder = "data/outputs/output_for_" + filename + "/"
+	filename = os.path.splitext(regex[1])[0]
+
+	folder = regex[0] + "/"
 
 	folder2 = folder + "evaluations_for_" + filename + "/"
 
