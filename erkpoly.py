@@ -29,20 +29,61 @@ def ner(text, filename, folder):
 
 	lines = f2.readlines()
 
-	for line in lines[:-1]:
+	for i, line in enumerate(lines):
 
-		tag = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
+		if(i == len(lines)-1):
+			break
 
-		if(not tag[1] == "O"):
-			tag1 = re.findall('I-(PER|ORG|LOC)', tag[1])[0]
-		else:
-			tag1 = tag[1]		
+		regex = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', line)[0]
+		token = regex[0]
+		tag = regex[1]
 
-		f3.write(tag[0] + "\t" + tag1 + "\n")
+		if(not tag == "O"):
+
+			intag = re.findall('I-(PER|ORG|LOC)', tag)[0]
+
+			next = lines[i+1]
+			regex = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', next)[0]
+			nexttag = regex[1]
+
+			if(not i == 0):
+
+				prev = lines[i-1]
+				regex = re.findall('(\w+|.)\s*(O|I-PER|I-ORG|I-LOC).*', prev)[0]
+				prevtag = regex[1]
+
+				if(not nexttag == tag and not prevtag == tag):
+	
+					tag = "(" + intag + ")"
+
+				elif(not nexttag == tag and prevtag == tag):
+
+					tag = intag + ")"
+
+				elif(nexttag == tag and not prevtag == tag):
+
+					tag = "(" + intag
+
+				elif(nexttag == tag and prevtag == tag):
+
+					tag = intag
+
+			else:
+
+				if(not nexttag == tag):
+	
+					tag = "(" + intag + ")"
+
+				else:
+
+					tag = "(" + intag
+
+
+		f3.write(token + "\t" + tag + "\n")
 		
-		tokenlist.append(tag[0])	
+		tokenlist.append(token)	
 
-		polytl.append(tag1)	
+		polytl.append(tag)	
 
 
 	f2.close()
@@ -55,24 +96,3 @@ def ner(text, filename, folder):
 
 
 
-#from polyglot.text import Text, Sentence
-#from difflib import SequenceMatcher
-#def ner(strsentlist, toksentlist, filename):
-#	f = open("poly-tags_for_" + filename + ".txt", "w+") 
-#	print(strsentlist)
-#	texttotal = ' '.join(strsentlist)
-#	text = Text(texttotal)
-#	for sent in text.sentences:
-#		print("-------------------\n", sent)
-#		f.write("------------------\n")
-#		entitylist = sent.entities
-#		for entity in entitylist:			
-#			print(entity[0] + " : " + entity.tag)
-#			f.write(entity[0] + " : " + entity.tag + "\n")
-#	f.close()
-#	return 0
-#def similar(a, b):
-#   return SequenceMatcher(None, a, b).ratio()
-#if __name__ == "__main__":
-#	str2 = ['Christiane heeft een lam.']
-#	print(ner(str2, "ner"))

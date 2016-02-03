@@ -40,22 +40,33 @@ def lister(toksentlist, filename, folder):
 
 					for index, lv in enumerate(c.leaves()):
 
-						if(index == 0):
+						if(len(c.leaves()) == 1):
+							
+							f.write(lv[0] + "\t"  + "(" + tag + ")" + "\n")
 
-#							print(lv[0] + "\t:\t" + "B-" +  tag[0])
-							f.write(lv[0] + "\t" + tag + "\n")
-
-							taglist.append(tag)
+							taglist.append("(" + tag + ")")
 
 						else:
-					
-#							print(lv[0] + "\t:\t"  + "I-" + tag[0])
-							f.write(lv[0] + "\t"  + tag + "\n")
+							if(index == 0):
 
-							taglist.append(tag)
+								f.write(lv[0] + "\t"  + "(" + tag + "\n")
+
+								taglist.append("(" + tag)
+						
+							elif(index == len(c.leaves())-1):
+
+								f.write(lv[0] + "\t"  + tag + ")" + "\n")
+
+								taglist.append(tag + ")")
+
+							else:
+					
+								f.write(lv[0] + "\t" + tag + "\n")
+
+								taglist.append(tag)
 
 			else:
-#				print(c[0])
+
 				f.write(str(c[0]) + "\tO" + "\n")
 	
 				taglist.append("O")
@@ -71,6 +82,8 @@ if __name__ == "__main__":
 	str2 = 'Christiane heeft een lam.'
 
 	tokenlist = nltk.word_tokenize(str2)
+
+	lister(tokenlist, "hede", "data/")
 
 	print(ner(tokenlist), "test")
 

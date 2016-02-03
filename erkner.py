@@ -25,11 +25,11 @@ if(len(sys.argv) > 2):
 
 f = open(inputfile, "r") 
 
-regex = re.findall('.*\/(.*)\/(.*)\.xml', inputfile)[0]
+regex = re.findall('data/inputs/frogged/(.*)\/(.*)', inputfile)[0]
 upfolder = regex[0]
 filename = os.path.splitext(regex[1])[0]
 
-folder = folder = "data/outputs/" + upfolder +  "/output_for_" + filename + "/"
+folder = "data/outputs/" + upfolder +  "/output_for_" + filename + "/"
 
 if not os.path.exists(folder):
     os.makedirs(folder)
@@ -38,63 +38,69 @@ print("File we are working on : " + filename)
 
 frg = open(folder + "frog-tags_for_" + filename + ".txt", "w+") 
 
-ftra = open(folder + "training-tags_for_" + filename + ".txt", "w+")
 
 toksentlist = [] # tokenized sentences list
 
 strsentlist = [] # string sentences list
 
-tokenlist = [] # tokenlist (sentence tokens)
+tokenlist = [] # tokens per sentence
 
 alltokens = []
 
 frogtl = [] # tl => taglist
 
-trainingtl = []
+linelist = f.readlines()
 
-firstline = True
 
-for line in f:
+for i, line in enumerate(linelist):
 	
 	dperl = line.split("\t")
 
-	if(firstline):
-		firstline = False
-		continue
+	if(len(dperl) > 1  and not i == len(linelist)-1):	
 
-	
-	elif(len(dperl) > 2):	
+		next = linelist[i+1]
 
 		token = dperl[1]
 
-		if(len(dperl) == 12):
+		ftag = dperl[6] # frog tag
 
-			if(not dperl[9] == "O"):
-				ftag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[9])[0]
-			else:
-				ftag = dperl[9] # frog tag
+		if(not ftag == "O"):
 
-			ttag = dperl[2] # training tag
+			intag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", ftag)[0]
 
-			if(ttag == "_"):
-				ttag = "O"
+			if(re.match("B-(PER|MISC|ORG|LOC|PRO|EVE)", ftag)):
 
-		elif(len(dperl) == 10):
+				if(len(next.split("\t")) > 1):
 
-			if(not dperl[7] == "O"):
-				ftag = re.findall(".-(PER|MISC|ORG|LOC|PRO|EVE)", dperl[7])[0]
-			else:
-				ftag = dperl[7]
+						if(re.match("I-(PER|MISC|ORG|LOC|PRO|EVE)", next.split("\t")[6])):
 
-			ttag = "O"
+							ftag = "(" + intag
 
-		else:
-			print("Input file format is not compatible")
+						else:
+
+							ftag = "(" + intag + ")"
+
+				else:
+						ftag = "(" + intag + ")"
 
 
-		trainingtl.append(ttag)
+			elif(re.match("I-(PER|MISC|ORG|LOC|PRO|EVE)", ftag)):
 
-		ftra.write(token + "\t" + ttag + "\n")
+				if(len(next.split("\t")) > 1):
+
+						if(re.match("I-(PER|MISC|ORG|LOC|PRO|EVE)", next.split("\t")[6])):
+
+							ftag = intag	
+
+						else:
+
+							ftag = intag + ")"
+
+				else:
+
+					ftag = intag + ")"
+
+
 
 		frg.write(token + "\t" + ftag + "\n")
 		
@@ -104,6 +110,16 @@ for line in f:
 
 		frogtl.append(ftag)	
 
+
+	elif(len(dperl) > 1 and i == len(linelist)-1):
+
+		toksentlist.append(tokenlist)
+
+		sentence = ' '.join(tokenlist)
+
+		strsentlist.append(sentence)
+
+		break
 
 	else:
 
@@ -118,17 +134,8 @@ for line in f:
 		continue
 
 
-else: #belongs to for-loop, the end of the file
 
-	toksentlist.append(tokenlist)
-
-	sentence = ' '.join(tokenlist)
-
-	strsentlist.append(sentence)
-
-
-
-texttotal = ' '.join(strsentlist)
+texttotal = ' '.join(strsentlist) # Complete text as string. 
 
 
 print("Frog data done.")
@@ -154,52 +161,49 @@ resp_folder = "data/outputs/responses/" + upfolder
 if not os.path.exists(resp_folder):
     os.makedirs(resp_folder)
 
-ferkclin = open(resp_folder + "/" + filename + ".xml.e", "w+")
+ferkclin = open(resp_folder + "/" + filename + ".txt.xml.ne", "w+")
 
 
-totallist = zip(alltokens, trainingtl, frogtl, nltktl, polytl)
+totallist = zip(alltokens, frogtl, nltktl, polytl)
 
-f3.write("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag\n")
-#print("# Token, Training Tags, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag")
+f3.write("# Token, Frog Tag, NLTK Tag, Polyglot Tag, Erk Tag\n")
 
-erk = ""
+erk = "" 
 
-ln = 0 # line number
+ln = 1 # line number
 
-for tok, tra, fro, nlt, pol in totallist:
+for tok, fro, nlt, pol in totallist:
 
 	if(nlt == fro and nlt == pol and fro == pol):
-		erk = nlt
+		erk = fro
 
 	elif(fro == pol and not fro == nlt):
 		erk = fro
 
 	elif(nlt == pol and not nlt == fro):
-		erk = nlt 
-
-	elif(nlt == fro and not nlt == pol):
 		erk = nlt
 
-	else: #If they are all different, trust nltk
-		erk=nlt
+	elif(nlt == fro and not nlt == pol):
+		erk = fro
+
+	else: #If they are all different, trust frog
+		erk = fro
 
 
 	ferk.write(tok + "\t" + erk + "\n")
 
-	if(erk == "O" or erk == "MISC"):
+	if(erk == "O"):
 		ferkclin.write(str(ln) + "\t" + tok + "\t" + "_" + "\t_" + "\n")
 	else:
-		ferkclin.write(str(ln) + "\t" + tok + "\t(" + erk + ")\t_" + "\n")
+		ferkclin.write(str(ln) + "\t" + tok + "\t" + erk + "\t_" + "\n")
 
-	#print(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk)
-	f3.write(str(ln) + "\t" + tok + "\t" + tra + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
+	f3.write(str(ln) + "\t" + tok + "\t" + fro + "\t" + nlt + "\t" + pol + "\t" + erk + "\n")
 
 	ln += 1
 
 
 f.close()
 frg.close()
-ftra.close()
 f3.close()
 ferk.close()
 
@@ -212,10 +216,7 @@ if(evaluation == True):
 	inputfile = folder + "results_for_" + filename + ".txt"
 
 	call(["./erktest.py", inputfile, "--all"])
-	print("Evaluation done.")
-
-else:
-	print("Evaluation didn't take place.")
+	print("ERK Evaluation done.")
 
 
 

@@ -1,24 +1,64 @@
 #!/home/narkem/lamachine/bin/python
 
-import frog
+import os
+import re
+import sys
+from subprocess import call
 
-fo = frog.FrogOptions()
-fr = frog.Frog(fo, "/home/narkem/lamachine/etc/frog/frog.cfg")
+inputfile = sys.argv[1]
 
-def ner(text):
+f = open(inputfile, "r") 
 
-	f = open("tmp-frog.txt", "w+")
+regex = re.findall('data/inputs/(.*)\/(.*)\.xml', inputfile)[0]
+upfolder = regex[0]
+filename = os.path.splitext(regex[1])[0]
 
-	for info in fr.process(text):
-		print(info['text'] + ' : ' + info['chunker'] + " , " + info['ner'])
+print("File we are working on : " + filename) 
 
-		f.write(info['text'] + ' : ' + info['chunker'] + " , " + info['ner'] + "\n")
+lt = open(".sentencestmp.txt", "w+") 
+
+tokenlist = [] # tokenlist (sentence tokens)
+
+for line in f:
+	
+	dperl = line.split("\t")
+	
+	if(len(dperl) > 1):	
+
+		token = dperl[1]
+		
+		tokenlist.append(token)	
+
+	else:
+
+		sentence = ' '.join(tokenlist)
+
+		lt.write(sentence + "\n\n")
+
+		tokenlist = []
+
+		continue
+
+lt.close()
 
 
-	f.close()
+folder = "data/inputs/frogged/" + upfolder + "/" 
 
-if __name__ == "__main__":
+if not os.path.exists(folder):
+    os.makedirs(folder)
 
-	str2 = 'Christiane heeft een lam.'
+outputfile = folder + filename + ".txt"
 
-	print(ner(str2))
+
+call(["frog", "-t", ".sentencestmp.txt", "--skip=[mpt]", "-o", outputfile])
+
+
+os.remove(".sentencestmp.txt")
+
+
+
+
+
+
+
+
